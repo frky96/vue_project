@@ -13,16 +13,16 @@ export default new VueRouter({
     {
       path: '/home',
       component: Home,
-      meta: {showFooter: true}
+      meta: {showFooter: true},
     },
     {
       path: '',
-      redirect: '/home'
+      redirect: '/home' //重定向
     },
     {
       path: '/search',
       component: Search,
-      meta: {showFooter: true}
+      meta: {showFooter: true},
     },
     {
       path: '/login',
@@ -32,6 +32,5 @@ export default new VueRouter({
       path: '/register',
       component: Register
     },
-    
   ]
 })

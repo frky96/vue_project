@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <Header></Header>
+    <!-- 每个页面都有的组件 -->
+    <Header></Header> 
     <router-view></router-view>
     <Footer v-show="$route.meta.showFooter"></Footer>
   </div>

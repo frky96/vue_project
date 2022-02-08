@@ -1,7 +1,7 @@
 module.exports = {
-  //检查语法
+  //语法检查关闭
   lintOnSave: false,
-  //代理服务器 跨域
+  //代理服务器解决跨域
   devServer: {
     proxy: {
       '/api': {

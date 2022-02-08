@@ -1,7 +1,7 @@
-import requests from './request'
+import axiosReq from './axiosReq'
 
-export const reqCategoryList = () => {
-  return requests({
+export const reqCateList = () => {
+  return axiosReq({
     url: '/product/getBaseCategoryList',
     method: 'GET'
   })

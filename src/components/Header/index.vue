@@ -60,9 +60,9 @@ export default {
     };
   },
   methods: {
-    async goSearch() {
+    goSearch() {
       // this.$router.push(`/search?keyword=${this.keyword}`)
-      await this.$router.push({
+      this.$router.push({
         path: "/search",
         query: {
           keyword: this.keyword,
