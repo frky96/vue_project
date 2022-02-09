@@ -89,22 +89,18 @@ export default {
     goSearch(e) {
       const eDataset = e.target.dataset;
       const { categoryname, category1id, category2id, category3id } = eDataset;
+      const location = { path: "/search" };
+      const query = { categoryName: categoryname };
       if (categoryname) {
-        let cateId;
         if (category1id) {
-          cateId = category1id;
+          query.category1Id = category1id;
         } else if (category2id) {
-          cateId = category2id;
+          query.category2Id = category2id;
         } else if (category3id) {
-          cateId = category3id;
+          query.category3Id = category3id;
         }
-        this.$router.push({
-          path: "/search",
-          query: {
-            categoryName: categoryname,
-            category1Id: cateId,
-          },
-        });
+        location.query = query;
+        this.$router.push(location);
       }
     },
     enterSort() {
@@ -120,8 +116,6 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch("home/getCateList");
-    console.log(this.$route);
     if (this.$route.path !== "/home") {
       this.sortShow = false;
     }
@@ -253,13 +247,13 @@ export default {
         }
       }
     }
-    .sort-enter{
+    .sort-enter {
       height: 0;
     }
-    .sort-enter-to{
+    .sort-enter-to {
       height: 46px;
     }
-    .sort-enter-active{
+    .sort-enter-active {
       transition: all 0.2s linear;
     }
   }

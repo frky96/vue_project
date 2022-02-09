@@ -11,6 +11,11 @@ import router from '@/router/index';
 //导入vuex仓库
 import store from '@/store/index';
 
+import '@/mock/mockServe';
+
+import 'swiper/css/swiper.css';
+
+
 Vue.config.productionTip = false;
 new Vue({
   render: h => h(App),
