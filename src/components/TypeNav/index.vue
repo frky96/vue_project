@@ -90,7 +90,7 @@ export default {
       const eDataset = e.target.dataset;
       const { categoryname, category1id, category2id, category3id } = eDataset;
       const location = { path: "/search" };
-      const query = { categoryName: categoryname };
+      const query = { timestamp: Date.now(), categoryName: categoryname };
       if (categoryname) {
         if (category1id) {
           query.category1Id = category1id;

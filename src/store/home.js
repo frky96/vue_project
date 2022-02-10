@@ -1,4 +1,4 @@
-import { reqCateList, reqBannerList } from "@/api/index";
+import { reqCateList, reqBannerList, reqFloorList} from "@/api/index";
 
 const actions = {
   async getCateList(context) {
@@ -12,6 +12,12 @@ const actions = {
     if (result.code === 200) {
       context.commit('GET_BANNER_LIST', result.data)
     }
+  },
+  async getFloorList(context) {
+    const result = await reqFloorList();
+    if (result.code === 200) {
+      context.commit('GET_FLOOR_LIST', result.data)
+    }
   }
 };
 const mutations = {
@@ -21,10 +27,14 @@ const mutations = {
   GET_BANNER_LIST(state, value) {
     state.bannerList = value;
   },
+  GET_FLOOR_LIST(state, value) {
+    state.floorList = value;
+  },
 };
 const state = {
   cateList: [],
-  bannerList: []
+  bannerList: [],
+  floorList: []
 };
 const getters = {};
 
