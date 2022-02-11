@@ -4,8 +4,10 @@ import App from './App.vue';
 //注册全局组件
 import TypeNav from './components/TypeNav';
 import Carousel from './components/Carousel';
+import Pagination from './components/Pagination';
 Vue.component(TypeNav.name, TypeNav);
 Vue.component(Carousel.name, Carousel);
+Vue.component(Pagination.name, Pagination);
 
 //导入路由器
 import router from '@/router/index';
@@ -26,4 +28,8 @@ new Vue({
   render: h => h(App),
   router, //注册路由器
   store, //注册vuex仓库
+  beforeCreate() {
+    Vue.prototype.$bus = this;
+  }
 }).$mount('#app')
+

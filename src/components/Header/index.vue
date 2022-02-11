@@ -66,10 +66,15 @@ export default {
         path: "/search",
         query: {
           keyword: this.keyword,
-          timestamp: Date.now() 
+          timestamp: Date.now(),
         },
       });
     },
+  },
+  mounted() {
+    this.$bus.$on("clearKeyword", () => {
+      this.keyword = "";
+    });
   },
 };
 </script>

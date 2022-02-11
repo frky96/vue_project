@@ -11,15 +11,34 @@
             </li>
           </ul>
           <ul class="fl sui-tag">
-            <li class="with-x">手机</li>
-            <li class="with-x">iphone<i>×</i></li>
-            <li class="with-x">华为<i>×</i></li>
-            <li class="with-x">OPPO<i>×</i></li>
+            <li class="with-x" v-show="searchParams.categoryName">
+              {{ searchParams.categoryName
+              }}<i @click="removeCategoryName">×</i>
+            </li>
+            <li class="with-x" v-show="searchParams.keyword">
+              {{ searchParams.keyword }}<i @click="removeKeyword">×</i>
+            </li>
+            <li class="with-x" v-show="searchParams.trademark">
+              {{ trademarkMod }}<i @click="removeTrademark">×</i>
+            </li>
+            <li
+              class="with-x"
+              v-show="searchParams.props"
+              v-for="(item, index) in searchParams.props"
+              :key="index"
+            >
+              {{ item.split(":")[1] }}<i @click="removeAttrs(index)">×</i>
+            </li>
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector :trademarkList="searchList.trademarkList" :attrsList="searchList.attrsList"/>
+        <SearchSelector
+          :trademarkList="searchList.trademarkList"
+          :attrsList="searchList.attrsList"
+          @giveSearchTrademark="giveSearchTrademark"
+          @giveSearchAttrs="giveSearchAttrs"
+        />
 
         <!--details-->
         <div class="details clearfix">
@@ -27,23 +46,17 @@
           <div class="sui-navbar">
             <div class="navbar-inner filter">
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <li :class="{ active: orderNum == 1 }">
+                  <a @click="sumOrder"
+                    >综合<span v-show="orderNum == 1 && !flagALL">⬆</span
+                    ><span v-show="orderNum == 1 && flagALL">⬇</span></a
+                  >
                 </li>
-                <li>
-                  <a href="#">销量</a>
-                </li>
-                <li>
-                  <a href="#">新品</a>
-                </li>
-                <li>
-                  <a href="#">评价</a>
-                </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li :class="{ active: orderNum == 2 }">
+                  <a @click="priceOrder"
+                    >价格<span v-show="orderNum == 2 && !flagPrice">⬆</span
+                    ><span v-show="orderNum == 2 && flagPrice">⬇</span></a
+                  >
                 </li>
               </ul>
             </div>
@@ -95,35 +108,7 @@
             </ul>
           </div>
           <!-- 分页器 -->
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
+          <Pagination />
         </div>
       </div>
     </div>
@@ -138,31 +123,96 @@ export default {
   components: {
     SearchSelector,
   },
-  // data() {
-  //   return {
-  //     searchParams: {
-  //       category1Id: "",
-  //       category2Id: "",
-  //       category3Id: "",
-  //       categoryName: "",
-  //       keyword: "",
-  //       order: "",
-  //       pageNo: 1,
-  //       pageSize: 10,
-  //       props: [],
-  //       trademark: "",
-  //     },
-  //   };
-  // },
+  data() {
+    return {
+      searchParams: {
+        category1Id: undefined,
+        category2Id: undefined,
+        category3Id: undefined,
+        categoryName: undefined,
+        keyword: undefined,
+        order: "1:desc",
+        pageNo: 1,
+        pageSize: 10,
+        props: [],
+        trademark: undefined,
+      },
+      flagALL: true,
+      flagPrice: true,
+      orderStr: "",
+    };
+  },
   computed: {
     ...mapState("search", ["searchList"]),
+    trademarkMod() {
+      return (
+        this.searchParams.trademark && this.searchParams.trademark.split(":")[1]
+      );
+    },
+    orderNum() {
+      return this.searchParams.order.split(":")[0];
+    },
+  },
+  methods: {
+    removeCategoryName() {
+      this.searchParams.categoryName = undefined;
+      this.searchParams.category1Id = undefined;
+      this.searchParams.category2Id = undefined;
+      this.searchParams.category3Id = undefined;
+      this.searchParams.props = [];
+      this.$store.dispatch("search/getSearchList", this.searchParams);
+      this.$router.push("/search");
+    },
+    removeKeyword() {
+      this.searchParams.keyword = undefined;
+      this.$store.dispatch("search/getSearchList", this.searchParams);
+      this.$router.push("/search");
+      this.$bus.$emit("clearKeyword");
+    },
+    giveSearchTrademark(trademark) {
+      this.searchParams.trademark = `${trademark.tmId}:${trademark.tmName}`;
+      this.$store.dispatch("search/getSearchList", this.searchParams);
+    },
+    removeTrademark() {
+      this.searchParams.trademark = undefined;
+      this.$store.dispatch("search/getSearchList", this.searchParams);
+    },
+    giveSearchAttrs(attrItem, item) {
+      let data = `${attrItem.attrId}:${item}:${attrItem.attrName}`;
+      this.searchParams.props.push(data);
+      this.searchParams.props = [...new Set(this.searchParams.props)];
+      this.$store.dispatch("search/getSearchList", this.searchParams);
+    },
+    removeAttrs(index) {
+      this.searchParams.props.splice(index, 1);
+      this.$store.dispatch("search/getSearchList", this.searchParams);
+    },
+    sumOrder() {
+      this.flagALL ? (this.orderStr = "asc") : (this.orderStr = "desc");
+      this.flagALL = !this.flagALL;
+      this.searchParams.order = `1:${this.orderStr}`;
+      this.$store.dispatch("search/getSearchList", this.searchParams);
+    },
+    priceOrder() {
+      this.flagPrice ? (this.orderStr = "asc") : (this.orderStr = "desc");
+      this.flagPrice = !this.flagPrice;
+      this.searchParams.order = `2:${this.orderStr}`;
+      this.$store.dispatch("search/getSearchList", this.searchParams);
+    },
   },
   watch: {
     $route: {
       immediate: true,
+      deep: true,
       handler() {
-        // Object.assign(this.searchParams, this.$route.query);
-        this.$store.dispatch("search/getSearchList", this.$route.query);
+        this.searchParams.categoryName = undefined;
+        this.searchParams.category1Id = undefined;
+        this.searchParams.category2Id = undefined;
+        this.searchParams.category3Id = undefined;
+        this.searchParams.keyword = undefined;
+        this.searchParams.trademark = undefined;
+        Object.assign(this.searchParams, this.$route.query);
+        this.$store.dispatch("search/getSearchList", this.searchParams);
       },
     },
   },
