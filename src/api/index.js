@@ -14,11 +14,16 @@ export const reqSearchList = (params = {}) => {
     data: params
   })
 }
+export const reqItemDetail = (skuId) => {
+  return axiosReq({
+    url: `/item/${skuId}`,
+    method: 'GET',
+  })
+}
 
 export const reqBannerList = () => {
   return mockAxios.get('/banner')
 }
-
 export const reqFloorList = () => {
   return mockAxios.get('/floor')
 }

@@ -1,19 +1,20 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
-import Home from '@/pages/Home'
-import Search from '@/pages/Search'
-import Login from '@/pages/Login'
-import Register from '@/pages/Register'
+import Home from '@/pages/Home';
+import Search from '@/pages/Search';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import Detail from '@/pages/Detail';
 
 export default new VueRouter({
   routes: [
     {
       path: '/home',
       component: Home,
-      meta: {showFooter: true},
+      meta: { showFooter: true },
     },
     {
       path: '',
@@ -22,7 +23,12 @@ export default new VueRouter({
     {
       path: '/search',
       component: Search,
-      meta: {showFooter: true},
+      meta: { showFooter: true },
+    },
+    {
+      path: '/detail/:skuId',
+      component: Detail,
+      meta: { showFooter: true },
     },
     {
       path: '/login',
@@ -32,5 +38,9 @@ export default new VueRouter({
       path: '/register',
       component: Register
     },
-  ]
+  ],
+  // 滚动行为
+  scrollBehavior(to, from, savedPosition) {
+    return { y: 0 }
+  }
 })

@@ -71,9 +71,9 @@
               >
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="item.html" target="_blank"
+                    <router-link :to="`/detail/${item.id}`"
                       ><img :src="item.defaultImg"
-                    /></a>
+                    /></router-link>
                   </div>
                   <div class="price">
                     <strong>
@@ -108,7 +108,12 @@
             </ul>
           </div>
           <!-- 分页器 -->
-          <Pagination />
+          <Pagination
+            :pageNo="searchList.pageNo"
+            :total="searchList.total"
+            :pageSize="searchList.pageSize"
+            @givePageNo="getPageNo"
+          />
         </div>
       </div>
     </div>
@@ -199,6 +204,11 @@ export default {
       this.searchParams.order = `2:${this.orderStr}`;
       this.$store.dispatch("search/getSearchList", this.searchParams);
     },
+    getPageNo(pageNum) {
+      console.log(pageNum);
+      this.searchParams.pageNo = pageNum;
+      this.$store.dispatch("search/getSearchList", this.searchParams);
+    },
   },
   watch: {
     $route: {
@@ -211,6 +221,7 @@ export default {
         this.searchParams.category3Id = undefined;
         this.searchParams.keyword = undefined;
         this.searchParams.trademark = undefined;
+        this.searchParams.pageNo = 1;
         Object.assign(this.searchParams, this.$route.query);
         this.$store.dispatch("search/getSearchList", this.searchParams);
       },
