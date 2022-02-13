@@ -1,8 +1,16 @@
 <template>
-  <div class="swiper-container">
+  <div class="swiper-container" ref="car">
     <div class="swiper-wrapper">
-      <div class="swiper-slide" v-for="item in skuImageList" :key="item.id">
-        <img :src="item.imgUrl" />
+      <div
+        class="swiper-slide"
+        v-for="(item, index) in skuImageList"
+        :key="item.id"
+      >
+        <img
+          :src="item.imgUrl"
+          :class="{ active: index == currentIndex }"
+          @mouseenter="enterImg(index)"
+        />
       </div>
     </div>
     <div class="swiper-button-next"></div>
@@ -15,6 +23,32 @@ import Swiper from "swiper";
 export default {
   name: "ImageList",
   props: ["skuImageList"],
+  data() {
+    return {
+      currentIndex: 0,
+    };
+  },
+  methods: {
+    enterImg(index) {
+      this.currentIndex = index;
+      this.$bus.$emit('giveImgUrl', index)
+    },
+  },
+  watch: {
+    skuImageList() {
+      this.$nextTick(() => {
+        new Swiper(this.$refs.car, {
+          slidesPerView: 3,
+          slidesPerGroup: 3,
+          // 如果需要前进后退按钮
+          navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+          },
+        });
+      });
+    },
+  },
 };
 </script>
 

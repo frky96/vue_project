@@ -95,12 +95,21 @@
             </div>
             <div class="cartWrap">
               <div class="controls">
-                <input autocomplete="off" class="itxt" />
-                <a href="javascript:" class="plus">+</a>
-                <a href="javascript:" class="mins">-</a>
+                <input
+                  type="”tel"
+                  maxlength="6"
+                  autocomplete="off"
+                  class="itxt"
+                  v-model="skuNum"
+                  @change="changeSkuNum"
+                />
+                <a class="plus" @click="skuNum++">+</a>
+                <a class="mins" @click="skuNum > 1 ? skuNum-- : (skuNum = 1)"
+                  >-</a
+                >
               </div>
               <div class="add">
-                <a href="javascript:">加入购物车</a>
+                <a @click="addToCart">加入购物车</a>
               </div>
             </div>
           </div>
@@ -340,6 +349,7 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
+import { reqCartList } from "@/api/index";
 import ImageList from "./ImageList/ImageList";
 import Zoom from "./Zoom/Zoom";
 export default {
@@ -348,16 +358,34 @@ export default {
     ImageList,
     Zoom,
   },
+  data() {
+    return {
+      skuNum: 1,
+    };
+  },
   computed: {
     ...mapState("detail", ["itemDetail"]),
     ...mapGetters("detail", ["categoryView", "skuInfo"]),
   },
   methods: {
     chooseAttr(item2, AttrList) {
-      AttrList.forEach(e => {
-        e.isChecked = '0';
+      AttrList.forEach((e) => {
+        e.isChecked = "0";
       });
-      item2.isChecked = '1';
+      item2.isChecked = "1";
+    },
+    changeSkuNum(e) {
+      let value = Number(e.target.value);
+      if (isNaN(value) || value < 1 || !Number.isInteger(value)) {
+        this.skuNum = 1;
+      }
+    },
+    async addToCart() {
+      const result = await reqCartList(this.categoryView.id, this.skuNum);
+      if (result.code === 200) {
+        alert("add to cart success");
+        this.$router.push(`/addCartSuccess?skuNum=${this.skuNum}`);
+      } else console.log("add to cart fail");
     },
   },
   mounted() {

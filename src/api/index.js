@@ -20,6 +20,12 @@ export const reqItemDetail = (skuId) => {
     method: 'GET',
   })
 }
+export const reqCartList = (skuId, skuNum) => {
+  return axiosReq({
+    url: `/cart/addToCart/${skuId}/${skuNum}`,
+    method: 'POST',
+  })
+}
 
 export const reqBannerList = () => {
   return mockAxios.get('/banner')

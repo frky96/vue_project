@@ -1,11 +1,11 @@
 <template>
-  <div class="spec-preview">
-    <img :src="skuImageList[0].imgUrl" v-if="skuImageList" />
-    <div class="event"></div>
+  <div class="spec-preview" ref="box">
+    <img :src="skuImageList[imgIndex].imgUrl" v-if="skuImageList" />
+    <div class="event" @mousemove="mousemove"></div>
     <div class="big">
-      <img :src="skuImageList[0].imgUrl" v-if="skuImageList" />
+      <img :src="skuImageList[imgIndex].imgUrl" v-if="skuImageList" ref="big" />
     </div>
-    <div class="mask"></div>
+    <div class="mask" ref="mask"></div>
   </div>
 </template>
 
@@ -13,6 +13,37 @@
 export default {
   name: "Zoom",
   props: ["skuImageList"],
+  data() {
+    return {
+      imgIndex: 0,
+    };
+  },
+  methods: {
+    mousemove(e) {
+      const mask = this.$refs.mask;
+      const box = this.$refs.box;
+      const big = this.$refs.big;
+      let maskLeft = e.offsetX - mask.offsetWidth / 2;
+      let maskTop = e.offsetY - mask.offsetHeight / 2;
+      if (maskLeft < 0) maskLeft = 0;
+      else if (maskLeft > box.offsetWidth - mask.offsetWidth) {
+        maskLeft = box.offsetWidth - mask.offsetWidth + "px";
+      }
+      if (maskTop < 0) maskTop = 0;
+      else if (maskTop > box.offsetHeight - mask.offsetHeight) {
+        maskTop = box.offsetHeight - mask.offsetHeight + "px";
+      }
+      mask.style.left = maskLeft + "px";
+      mask.style.top = maskTop + "px";
+      big.style.left = -2 * maskLeft + "px";
+      big.style.top = -2 * maskTop + "px";
+    },
+  },
+  mounted() {
+    this.$bus.$on("giveImgUrl", (index) => {
+      this.imgIndex = index;
+    });
+  },
 };
 </script>
 

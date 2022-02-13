@@ -12,6 +12,6 @@ export default new Vuex.Store({
   modules: {
     home,
     search,
-    detail
+    detail,
   }
 })

@@ -197,17 +197,29 @@ export default {
       this.flagALL = !this.flagALL;
       this.searchParams.order = `1:${this.orderStr}`;
       this.$store.dispatch("search/getSearchList", this.searchParams);
+      this.$router.push({
+        path: "/search",
+        query: this.searchParams,
+      });
     },
     priceOrder() {
       this.flagPrice ? (this.orderStr = "asc") : (this.orderStr = "desc");
       this.flagPrice = !this.flagPrice;
       this.searchParams.order = `2:${this.orderStr}`;
       this.$store.dispatch("search/getSearchList", this.searchParams);
+      this.$router.push({
+        path: "/search",
+        query: this.searchParams,
+      });
     },
     getPageNo(pageNum) {
       console.log(pageNum);
       this.searchParams.pageNo = pageNum;
       this.$store.dispatch("search/getSearchList", this.searchParams);
+      this.$router.push({
+        path: "/search",
+        query: this.searchParams,
+      });
     },
   },
   watch: {

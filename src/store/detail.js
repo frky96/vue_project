@@ -6,6 +6,12 @@ const actions = {
     if (result.code === 200) {
       context.commit('GET_ITEM_DETAIL', result.data);
     }
+  },
+  async getCartList(context, value) {
+    const result = await reqCartList(value);
+    if (result.code === 200) {
+      context.commit('GET_ITEM_DETAIL', result.data);
+    }
   }
 };
 const mutations = {
