@@ -20,10 +20,28 @@ export const reqItemDetail = (skuId) => {
     method: 'GET',
   })
 }
-export const reqCartList = (skuId, skuNum) => {
+export const reqAddToCart = (skuId, skuNum) => {
   return axiosReq({
     url: `/cart/addToCart/${skuId}/${skuNum}`,
     method: 'POST',
+  })
+}
+export const reqCartList = () => {
+  return axiosReq({
+    url: `/cart/cartList`,
+    method: 'GET',
+  })
+}
+export const delCart = (skuId) => {
+  return axiosReq({
+    url: `/cart/deleteCart/${skuId}`,
+    method: 'DELETE',
+  })
+}
+export const checkCart = (skuID,isChecked) => {
+  return axiosReq({
+    url: `/cart/checkCart/${skuID}/${isChecked}`,
+    method: 'GET',
   })
 }
 

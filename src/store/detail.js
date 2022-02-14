@@ -1,4 +1,5 @@
 import { reqItemDetail } from '@/api/index';
+import { uuidToken } from '@/utils/uuid';
 
 const actions = {
   async getItemDetail(context, value) {
@@ -20,7 +21,8 @@ const mutations = {
   }
 };
 const state = {
-  itemDetail: {}
+  itemDetail: {},
+  uuidToken: uuidToken()
 };
 const getters = {
   categoryView(state) {
@@ -29,7 +31,6 @@ const getters = {
   skuInfo(state) {
     return state.itemDetail.skuInfo || {};
   },
-
 };
 
 export default {

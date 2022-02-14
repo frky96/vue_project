@@ -9,6 +9,7 @@ import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import Detail from '@/pages/Detail';
 import AddCartSuccess from '@/pages/AddCartSuccess';
+import ShopCart from '@/pages/ShopCart';
 
 export default new VueRouter({
   routes: [
@@ -34,6 +35,11 @@ export default new VueRouter({
     {
       path: '/addCartSuccess',
       component: AddCartSuccess,
+      meta: { showFooter: true },
+    },
+    {
+      path: '/shopCart',
+      component: ShopCart,
       meta: { showFooter: true },
     },
     {

@@ -349,7 +349,7 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import { reqCartList } from "@/api/index";
+import { reqAddToCart } from "@/api/index";
 import ImageList from "./ImageList/ImageList";
 import Zoom from "./Zoom/Zoom";
 export default {
@@ -381,9 +381,10 @@ export default {
       }
     },
     async addToCart() {
-      const result = await reqCartList(this.categoryView.id, this.skuNum);
+      const result = await reqAddToCart(this.skuInfo.id, this.skuNum);
       if (result.code === 200) {
         alert("add to cart success");
+        sessionStorage.setItem('SKU_INFO', JSON.stringify(this.skuInfo))
         this.$router.push(`/addCartSuccess?skuNum=${this.skuNum}`);
       } else console.log("add to cart fail");
     },
