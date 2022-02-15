@@ -1,8 +1,8 @@
 import { reqSearchList } from '@/api/index';
 
 const actions = {
-  async getSearchList(context, value) {
-    const result = await reqSearchList(value);
+  async getSearchList(context, data) {
+    const result = await reqSearchList(data);
     if (result.code === 200) {
       context.commit('GET_SEARCH_LIST', result.data);
     }

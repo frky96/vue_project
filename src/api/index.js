@@ -32,16 +32,36 @@ export const reqCartList = () => {
     method: 'GET',
   })
 }
-export const delCart = (skuId) => {
+export const reqDelCart = (skuId) => {
   return axiosReq({
     url: `/cart/deleteCart/${skuId}`,
     method: 'DELETE',
   })
 }
-export const checkCart = (skuID,isChecked) => {
+export const reqCheckCart = (skuID,isChecked) => {
   return axiosReq({
     url: `/cart/checkCart/${skuID}/${isChecked}`,
     method: 'GET',
+  })
+}
+export const reqCode = (phoneNum) => {
+  return axiosReq({
+    url: `/user/passport/sendCode/${phoneNum}`,
+    method: 'GET',
+  })
+}
+export const reqRegister = (data) => {
+  return axiosReq({
+    url: `/user/passport/register`,
+    method: 'POST',
+    data
+  })
+}
+export const reqLogin = (data) => {
+  return axiosReq({
+    url: `/user/passport/login`,
+    method: 'POST',
+    data
   })
 }
 

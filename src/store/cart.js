@@ -1,4 +1,4 @@
-import { reqCartList } from '@/api/index';
+import { reqCartList, reqAddToCart, reqCheckCart, reqDelCart } from '@/api/index';
 
 const actions = {
   async getCartList(context) {
@@ -7,6 +7,30 @@ const actions = {
       context.commit('GET_CART_LIST', result.data);
     }
   },
+  async addToCart(context, { data1, data2 }) {
+    const result = await reqAddToCart(data1, data2);
+    if (result.code == 200) {
+      console.log(result.message);
+    } else {
+      return Promise.reject(result.message)
+    }
+  },
+  async checkCart(context, { data1, data2 }) {
+    const result = await reqCheckCart(data1, data2);
+    if (result.code == 200) {
+      console.log(result.message);
+    } else {
+      return Promise.reject(result.message)
+    }
+  },
+  async delCart(context, data) {
+    const result = await reqDelCart(data);
+    if (result.code == 200) {
+      console.log(result.message);
+    } else {
+      return Promise.reject(result.message)
+    }
+  }
 };
 const mutations = {
   GET_CART_LIST(state, value) {
@@ -18,9 +42,7 @@ const state = {
   cartList: [],
   cartInfoList: []
 };
-const getters = {
-
-};
+const getters = {}
 
 export default {
   namespaced: true,

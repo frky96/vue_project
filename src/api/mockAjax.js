@@ -20,7 +20,7 @@ mockAxios.interceptors.response.use(
   },
   error => {
     console.log(error);
-    return new Promise(() => { });
+    return Promise.reject(error);
   }
 );
 

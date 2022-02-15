@@ -109,7 +109,7 @@
                 >
               </div>
               <div class="add">
-                <a @click="addToCart">加入购物车</a>
+                <a @click="clickaddToCart">加入购物车</a>
               </div>
             </div>
           </div>
@@ -349,7 +349,6 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import { reqAddToCart } from "@/api/index";
 import ImageList from "./ImageList/ImageList";
 import Zoom from "./Zoom/Zoom";
 export default {
@@ -380,13 +379,18 @@ export default {
         this.skuNum = 1;
       }
     },
-    async addToCart() {
-      const result = await reqAddToCart(this.skuInfo.id, this.skuNum);
-      if (result.code === 200) {
-        alert("add to cart success");
-        sessionStorage.setItem('SKU_INFO', JSON.stringify(this.skuInfo))
+    async clickaddToCart() {
+      try {
+        await this.$store.dispatch("cart/addToCart", {
+          data1: this.skuInfo.id,
+          data2: this.skuNum,
+        });
+        //将商品信息存入sessionStorage
+        sessionStorage.setItem("SKU_INFO", JSON.stringify(this.skuInfo));
         this.$router.push(`/addCartSuccess?skuNum=${this.skuNum}`);
-      } else console.log("add to cart fail");
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
   mounted() {

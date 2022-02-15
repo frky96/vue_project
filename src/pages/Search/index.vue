@@ -159,44 +159,47 @@ export default {
     },
   },
   methods: {
+    getSearchList() {
+      this.$store.dispatch("search/getSearchList", this.searchParams);
+    },
     removeCategoryName() {
       this.searchParams.categoryName = undefined;
       this.searchParams.category1Id = undefined;
       this.searchParams.category2Id = undefined;
       this.searchParams.category3Id = undefined;
       this.searchParams.props = [];
-      this.$store.dispatch("search/getSearchList", this.searchParams);
+      this.getSearchList();
       this.$router.push("/search");
     },
     removeKeyword() {
       this.searchParams.keyword = undefined;
-      this.$store.dispatch("search/getSearchList", this.searchParams);
+      this.getSearchList();
       this.$router.push("/search");
       this.$bus.$emit("clearKeyword");
     },
     giveSearchTrademark(trademark) {
       this.searchParams.trademark = `${trademark.tmId}:${trademark.tmName}`;
-      this.$store.dispatch("search/getSearchList", this.searchParams);
+      this.getSearchList();
     },
     removeTrademark() {
       this.searchParams.trademark = undefined;
-      this.$store.dispatch("search/getSearchList", this.searchParams);
+      this.getSearchList();
     },
     giveSearchAttrs(attrItem, item) {
       let data = `${attrItem.attrId}:${item}:${attrItem.attrName}`;
       this.searchParams.props.push(data);
       this.searchParams.props = [...new Set(this.searchParams.props)];
-      this.$store.dispatch("search/getSearchList", this.searchParams);
+      this.getSearchList();
     },
     removeAttrs(index) {
       this.searchParams.props.splice(index, 1);
-      this.$store.dispatch("search/getSearchList", this.searchParams);
+      this.getSearchList();
     },
     sumOrder() {
       this.flagALL ? (this.orderStr = "asc") : (this.orderStr = "desc");
       this.flagALL = !this.flagALL;
       this.searchParams.order = `1:${this.orderStr}`;
-      this.$store.dispatch("search/getSearchList", this.searchParams);
+      this.getSearchList();
       this.$router.push({
         path: "/search",
         query: this.searchParams,
@@ -206,7 +209,7 @@ export default {
       this.flagPrice ? (this.orderStr = "asc") : (this.orderStr = "desc");
       this.flagPrice = !this.flagPrice;
       this.searchParams.order = `2:${this.orderStr}`;
-      this.$store.dispatch("search/getSearchList", this.searchParams);
+      this.getSearchList();
       this.$router.push({
         path: "/search",
         query: this.searchParams,
@@ -215,7 +218,7 @@ export default {
     getPageNo(pageNum) {
       console.log(pageNum);
       this.searchParams.pageNo = pageNum;
-      this.$store.dispatch("search/getSearchList", this.searchParams);
+      this.getSearchList();
       this.$router.push({
         path: "/search",
         query: this.searchParams,
@@ -235,7 +238,7 @@ export default {
         this.searchParams.trademark = undefined;
         this.searchParams.pageNo = 1;
         Object.assign(this.searchParams, this.$route.query);
-        this.$store.dispatch("search/getSearchList", this.searchParams);
+        this.getSearchList();
       },
     },
   },

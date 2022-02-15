@@ -2,14 +2,14 @@ import { reqItemDetail } from '@/api/index';
 import { uuidToken } from '@/utils/uuid';
 
 const actions = {
-  async getItemDetail(context, value) {
-    const result = await reqItemDetail(value);
+  async getItemDetail(context, data) {
+    const result = await reqItemDetail(data);
     if (result.code === 200) {
       context.commit('GET_ITEM_DETAIL', result.data);
     }
   },
-  async getCartList(context, value) {
-    const result = await reqCartList(value);
+  async getCartList(context, data) {
+    const result = await reqCartList(data);
     if (result.code === 200) {
       context.commit('GET_ITEM_DETAIL', result.data);
     }

@@ -17,10 +17,10 @@
               type="checkbox"
               name="chk_list"
               :checked="item.isChecked"
-              @click="clickCheckBox(item)"
+              @click="clickCheckBox($event, item)"
             />
           </li>
-          <li class="cart-list-con2">
+          <li class="cart-list-con2" @click="clickItem(item)">
             <img :src="item.imgUrl" />
             <div class="item-msg">
               {{ item.skuName }}
@@ -57,7 +57,7 @@
         <input
           class="chooseAll"
           type="checkbox"
-          :checked="isAllChecked"
+          :checked="isAllChecked && cartInfoList.length > 0"
           @click="clickAllCheckBox"
         />
         <span>全选</span>
@@ -86,34 +86,48 @@
 
 <script>
 import { mapState } from "vuex";
-import { reqAddToCart, delCart, checkCart } from "@/api/index";
-
 export default {
   name: "ShopCart",
   computed: {
     ...mapState("cart", ["cartInfoList"]),
-    totalPrice() {
-      return this.cartInfoList.reduce((r, v) => {
-        return (r += v.skuPrice * v.skuNum);
-      }, 0);
-    },
-    isAllChecked() {
-      return this.cartInfoList.every((e) => e.isChecked == 1);
-    },
     totalSkuNum() {
       return this.cartInfoList.reduce((r, v) => {
         return (r += v.skuNum);
       }, 0);
     },
+    totalPrice() {
+      const checkeditem = this.cartInfoList.filter((e) => {
+        return e.isChecked == 1;
+      });
+      return checkeditem.reduce((r, v) => {
+        return (r += v.skuPrice * v.skuNum);
+      }, 0);
+    },
+    isAllChecked() {
+      return this.cartInfoList.every((e) => {
+        return e.isChecked == 1;
+      });
+    },
   },
   methods: {
+    getCartList() {
+      this.$store.dispatch("cart/getCartList");
+    },
+    clickItem(item) {
+      this.$router.push(`/detail/${item.skuId}`);
+    },
     async changeSkuNum(type, num, item) {
       switch (type) {
         case "add":
           num = 1;
           break;
         case "sub":
-          num = item.skuNum > 1 ? -1 : 0;
+          if (item.skuNum > 1) {
+            num = -1;
+          } else {
+            num = 0;
+            this.clickDel(item);
+          }
           break;
         case "change":
           if (isNaN(num) || num < 1) {
@@ -123,52 +137,52 @@ export default {
           }
           break;
       }
-      const result = await reqAddToCart(item.skuId, num);
-      if (result.code === 200) {
-        console.log("modify skuNum success");
-        this.$store.dispatch("cart/getCartList");
-      } else console.log("modify skuNum fail");
-    },
-    async clickCheckBox(item) {
-      if (item.isChecked == 1) {
-        item.isChecked = 0;
-      } else if (item.isChecked == 0) {
-        item.isChecked = 1;
-      }
-      const result = await checkCart(item.skuId, item.isChecked);
-      if (result.code === 200) {
-        console.log("change check success");
-        this.$store.dispatch("cart/getCartList");
-      } else console.log("change check fail");
-    },
-    clickAllCheckBox() {
-      if (this.isAllChecked) {
-        this.cartInfoList.forEach(async (e) => {
-          e.isChecked = 0;
-          const result = await checkCart(e.skuId, e.isChecked);
-          if (result.code === 200) {
-            console.log("change check success");
-            this.$store.dispatch("cart/getCartList");
-          } else console.log("change check fail");
+      try {
+        await this.$store.dispatch("cart/addToCart", {
+          data1: item.skuId,
+          data2: num,
         });
-      } else {
-        this.cartInfoList.forEach(async (e) => {
-          e.isChecked = 1;
-          const result = await checkCart(e.skuId, e.isChecked);
-          if (result.code === 200) {
-            console.log("change check success");
-            this.$store.dispatch("cart/getCartList");
-          } else console.log("change check fail");
-        });
+        this.getCartList();
+      } catch (error) {
+        console.log(error);
       }
+    },
+    async clickCheckBox(e, item) {
+      let checkStatus = e.target.checked ? "1" : "0";
+      try {
+        await this.$store.dispatch("cart/checkCart", {
+          data1: item.skuId,
+          data2: checkStatus,
+        });
+        this.getCartList();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    clickAllCheckBox(e) {
+      let checkStatus = e.target.checked ? "1" : "0";
+      this.cartInfoList.forEach(async (e) => {
+        if (e.checked != checkStatus) {
+          try {
+            await this.$store.dispatch("cart/checkCart", {
+              data1: e.skuId,
+              data2: checkStatus,
+            });
+            this.getCartList();
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      });
     },
     async clickDel(item) {
-      if (confirm("sure delete?")) {
-        const result = await delCart(item.skuId);
-        if (result.code == 200) {
-          console.log("delete success");
-          this.$store.dispatch("cart/getCartList");
-        } else console.log("delete fail");
+      if (confirm("sure del?")) {
+        try {
+          await this.$store.dispatch("cart/delCart", item.skuId);
+          this.getCartList();
+        } catch (error) {
+          console.log(error);
+        }
       }
     },
     async delCheckedItem() {
@@ -176,16 +190,17 @@ export default {
         return e.isChecked == 1;
       });
       checkeditem.forEach(async (e) => {
-        const result = await delCart(e.skuId);
-        if (result.code == 200) {
-          console.log("delete success");
-          this.$store.dispatch("cart/getCartList");
-        } else console.log("delete fail");
+        try {
+          await this.$store.dispatch("cart/delCart", e.skuId);
+          this.getCartList();
+        } catch (error) {
+          console.log(error);
+        }
       });
     },
   },
   mounted() {
-    this.$store.dispatch("cart/getCartList");
+    this.getCartList();
   },
 };
 </script>
