@@ -1,5 +1,5 @@
 import axiosReq from './axiosReq';
-import mockAxios from './mockAjax'
+import mockAxios from './mockAjax';
 
 export const reqCateList = () => {
   return axiosReq({
@@ -38,12 +38,26 @@ export const reqDelCart = (skuId) => {
     method: 'DELETE',
   })
 }
-export const reqCheckCart = (skuID,isChecked) => {
+export const reqCheckCart = (skuID, isChecked) => {
   return axiosReq({
     url: `/cart/checkCart/${skuID}/${isChecked}`,
     method: 'GET',
   })
 }
+export const reqUserAddress = () => {
+  return axiosReq({
+    url: `/user/userAddress/auth/findUserAddressList`,
+    method: 'GET',
+  })
+}
+export const reqOrderList = () => {
+  return axiosReq({
+    url: `/order/auth/trade`,
+    method: 'GET',
+  })
+}
+
+
 export const reqCode = (phoneNum) => {
   return axiosReq({
     url: `/user/passport/sendCode/${phoneNum}`,
@@ -64,6 +78,19 @@ export const reqLogin = (data) => {
     data
   })
 }
+export const reqUserInfo = () => {
+  return axiosReq({
+    url: `/user/passport/auth/getUserInfo`,
+    method: 'GET',
+  })
+}
+export const reqLogout = () => {
+  return axiosReq({
+    url: `/user/passport/logout`,
+    method: 'GET',
+  })
+}
+
 
 export const reqBannerList = () => {
   return mockAxios.get('/banner')

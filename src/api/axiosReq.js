@@ -15,6 +15,9 @@ axiosReq.interceptors.request.use((config) => {
     //添加响应头userTempId：uuid游客唯一标识符
     config.headers.userTempId = store.state.detail.uuidToken;
   }
+  if (localStorage.getItem('token')) {
+    config.headers.token = localStorage.getItem('token');
+  }
   return config;
 });
 

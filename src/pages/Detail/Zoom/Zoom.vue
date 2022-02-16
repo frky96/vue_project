@@ -1,9 +1,16 @@
 <template>
   <div class="spec-preview" ref="box">
-    <img :src="skuImageList[imgIndex].imgUrl" v-if="skuImageList" />
+    <img
+      :src="skuImageList[imgIndex].imgUrl"
+      v-if="skuImageList && skuImageList[imgIndex]"
+    />
     <div class="event" @mousemove="mousemove"></div>
     <div class="big">
-      <img :src="skuImageList[imgIndex].imgUrl" v-if="skuImageList" ref="big" />
+      <img
+        :src="skuImageList[imgIndex].imgUrl"
+        v-if="skuImageList && skuImageList[imgIndex]"
+        ref="big"
+      />
     </div>
     <div class="mask" ref="mask"></div>
   </div>

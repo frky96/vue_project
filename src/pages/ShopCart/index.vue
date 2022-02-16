@@ -77,7 +77,7 @@
           <i class="summoney">{{ totalPrice }}</i>
         </div>
         <div class="sumbtn">
-          <a class="sum-btn" href="###" target="_blank">结算</a>
+          <router-link class="sum-btn" to="/trade">结算</router-link>
         </div>
       </div>
     </div>
@@ -90,16 +90,18 @@ export default {
   name: "ShopCart",
   computed: {
     ...mapState("cart", ["cartInfoList"]),
+    checkedItem() {
+      return this.cartInfoList.filter((e) => {
+        return e.isChecked == 1;
+      });
+    },
     totalSkuNum() {
-      return this.cartInfoList.reduce((r, v) => {
+      return this.checkedItem.reduce((r, v) => {
         return (r += v.skuNum);
       }, 0);
     },
     totalPrice() {
-      const checkeditem = this.cartInfoList.filter((e) => {
-        return e.isChecked == 1;
-      });
-      return checkeditem.reduce((r, v) => {
+      return this.checkedItem.reduce((r, v) => {
         return (r += v.skuPrice * v.skuNum);
       }, 0);
     },
@@ -110,8 +112,12 @@ export default {
     },
   },
   methods: {
-    getCartList() {
-      this.$store.dispatch("cart/getCartList");
+    async getCartList() {
+      try {
+        await this.$store.dispatch("cart/getCartList");
+      } catch (error) {
+        console.log(error);
+      }
     },
     clickItem(item) {
       this.$router.push(`/detail/${item.skuId}`);
@@ -159,40 +165,44 @@ export default {
         console.log(error);
       }
     },
-    clickAllCheckBox(e) {
+    async clickAllCheckBox(e) {
       let checkStatus = e.target.checked ? "1" : "0";
-      this.cartInfoList.forEach(async (e) => {
-        if (e.checked != checkStatus) {
-          try {
-            await this.$store.dispatch("cart/checkCart", {
+      const arrPromise = [];
+      this.cartInfoList.forEach((e) => {
+        if (e.isChecked != checkStatus) {
+          arrPromise.push(
+            this.$store.dispatch("cart/checkCart", {
               data1: e.skuId,
               data2: checkStatus,
-            });
-            this.getCartList();
-          } catch (error) {
-            console.log(error);
-          }
+            })
+          );
         }
       });
+      // console.log(arrPromise);
+      try {
+        await Promise.all(arrPromise);
+        this.getCartList();
+      } catch (error) {
+        console.log(error);
+      }
     },
     async clickDel(item) {
       if (confirm("sure del?")) {
         try {
           await this.$store.dispatch("cart/delCart", item.skuId);
           this.getCartList();
+          location.reload();
         } catch (error) {
           console.log(error);
         }
       }
     },
     async delCheckedItem() {
-      const checkeditem = this.cartInfoList.filter((e) => {
-        return e.isChecked == 1;
-      });
-      checkeditem.forEach(async (e) => {
+      this.checkedItem.forEach(async (e) => {
         try {
           await this.$store.dispatch("cart/delCart", e.skuId);
           this.getCartList();
+          location.reload();
         } catch (error) {
           console.log(error);
         }

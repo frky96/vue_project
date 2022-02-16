@@ -10,8 +10,11 @@ import Register from '@/pages/Register';
 import Detail from '@/pages/Detail';
 import AddCartSuccess from '@/pages/AddCartSuccess';
 import ShopCart from '@/pages/ShopCart';
+import Trade from '@/pages/Trade';
 
-export default new VueRouter({
+import store from '@/store';
+
+const router = new VueRouter({
   routes: [
     {
       path: '/home',
@@ -43,16 +46,39 @@ export default new VueRouter({
       meta: { showFooter: true },
     },
     {
-      path: '/login',
-      component: Login
+      path: '/trade',
+      component: Trade,
+      meta: { showFooter: true },
     },
     {
       path: '/register',
       component: Register
     },
+    {
+      path: '/login',
+      component: Login,
+      beforeEnter: (to, from, next) => {
+        if (store.state.regLog.userInfo.name) {
+          next(from)
+        } else {
+          next()
+        }
+      }
+    },
   ],
   // 滚动行为
   scrollBehavior(to, from, savedPosition) {
-    return { y: 0 }
+    return { y: 0 };
   }
 })
+
+router.beforeEach(async (to, from, next) => {
+  try {
+    await store.dispatch("regLog/getUserInfo");
+  } catch (error) {
+    console.log(error);
+  }
+  next();
+})
+
+export default router;

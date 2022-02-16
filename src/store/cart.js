@@ -5,6 +5,8 @@ const actions = {
     const result = await reqCartList();
     if (result.code === 200) {
       context.commit('GET_CART_LIST', result.data);
+    } else {
+      return Promise.reject(result.message)
     }
   },
   async addToCart(context, { data1, data2 }) {

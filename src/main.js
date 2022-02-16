@@ -22,7 +22,6 @@ import '@/mock/mockServe.js';
 import 'swiper/css/swiper.css';
 
 
-
 Vue.config.productionTip = false;
 new Vue({
   render: h => h(App),

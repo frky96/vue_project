@@ -8,6 +8,7 @@ import search from './search';
 import detail from './detail';
 import cart from './cart';
 import regLog from './regLog';
+import order from './order';
 
 //vuex是个对象 他的Store方法是构造函数 可以初始化vuex仓库
 export default new Vuex.Store({
@@ -16,6 +17,7 @@ export default new Vuex.Store({
     search,
     detail,
     cart,
-    regLog
+    regLog,
+    order
   }
 })

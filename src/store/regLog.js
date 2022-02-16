@@ -1,4 +1,4 @@
-import { reqCode, reqRegister, reqLogin } from '@/api/index';
+import { reqCode, reqRegister, reqLogin, reqUserInfo, reqLogout } from '@/api/index';
 
 const actions = {
   async getCode(context, data) {
@@ -19,26 +19,50 @@ const actions = {
   async getLoginData(context, data) {
     const result = await reqLogin(data);
     if (result.code == 200) {
-      console.log(result.message);
+      localStorage.setItem('token', result.data.token);
       context.commit('GET_LOGIN_DATA', result.data);
     } else {
       return Promise.reject(result.message)
     }
   },
+  async getUserInfo(context) {
+    const result = await reqUserInfo();
+    if (result.code == 200) {
+      console.log(result.message);
+      context.commit('GET_USER_INFO', result.data);
+    } else {
+      return Promise.reject(result)
+    }
+  },
+  async logout(context) {
+    const result = await reqLogout();
+    console.log(result);
+    if (result.code == 200) {
+      console.log(result.message);
+      context.commit('LOGOUT');
+    } else {
+      return Promise.reject(result.message)
+    }
+  }
 };
 const mutations = {
   GET_CODE(state, value) {
     state.code = value;
   },
   GET_LOGIN_DATA(state, value) {
-    state.token = value.token;
     state.loginData = value;
+  },
+  GET_USER_INFO(state, value) {
+    state.userInfo = value;
+  },
+  LOGOUT(state) {
+    state.userInfo = {}
   }
 };
 const state = {
   code: '',
   loginData: {},
-  token: '',
+  userInfo: {}
 };
 const getters = {}
 

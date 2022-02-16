@@ -12,7 +12,6 @@
               <a href="##" class="current">账户登录</a>
             </li>
           </ul>
-
           <div class="content">
             <form action="##">
               <div class="input-text clearFix">
@@ -38,7 +37,7 @@
                 </label>
                 <span class="forget">忘记密码？</span>
               </div>
-              <button class="btn" @click="clickLogin">登&nbsp;&nbsp;录</button>
+              <button class="btn" @click.prevent="clickLogin">登&nbsp;&nbsp;录</button>
             </form>
 
             <div class="call clearFix">
