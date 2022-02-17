@@ -78,12 +78,11 @@ export default {
         },
       });
     },
-    clickLogout() {
+    async clickLogout() {
       try {
-        this.$store.dispatch("logout");
+        await this.$store.dispatch("regLog/logout");
         localStorage.removeItem("token");
         this.$router.push("/home");
-        location.reload();
       } catch (error) {
         console.log(error);
       }

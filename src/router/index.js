@@ -11,6 +11,11 @@ import Detail from '@/pages/Detail';
 import AddCartSuccess from '@/pages/AddCartSuccess';
 import ShopCart from '@/pages/ShopCart';
 import Trade from '@/pages/Trade';
+import Pay from '@/pages/Pay';
+import PaySuccess from '@/pages/PaySuccess';
+import Center from '@/pages/Center';
+import MyOrder from '@/pages/Center/MyOrder';
+import GroupOrder from '@/pages/Center/GroupOrder';
 
 import store from '@/store';
 
@@ -51,17 +56,42 @@ const router = new VueRouter({
       meta: { showFooter: true },
     },
     {
+      path: '/pay',
+      component: Pay,
+      meta: { showFooter: true },
+    },
+    {
+      path: '/paySuccess',
+      component: PaySuccess,
+      meta: { showFooter: true },
+    },
+    {
+      path: '/center',
+      component: Center,
+      meta: { showFooter: true },
+      children: [
+        {
+          path: 'myOrder',
+          component: MyOrder
+        },
+        {
+          path: 'groupOrder',
+          component: GroupOrder
+        }
+      ]
+    },
+    {
       path: '/register',
-      component: Register
+      component: Register,
     },
     {
       path: '/login',
       component: Login,
       beforeEnter: (to, from, next) => {
         if (store.state.regLog.userInfo.name) {
-          next(from)
+          next(from);
         } else {
-          next()
+          next();
         }
       }
     },
@@ -77,6 +107,7 @@ router.beforeEach(async (to, from, next) => {
     await store.dispatch("regLog/getUserInfo");
   } catch (error) {
     console.log(error);
+    store.state.regLog.userInfo = {};
   }
   next();
 })

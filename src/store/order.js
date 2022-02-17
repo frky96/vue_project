@@ -5,6 +5,8 @@ const actions = {
     const result = await reqUserAddress(data);
     if (result.code === 200) {
       context.commit('GET_USER_ADDRESS', result.data);
+    } else {
+      return Promise.reject(result);
     }
   },
   async getOrderList(context, data) {
@@ -12,7 +14,7 @@ const actions = {
     if (result.code === 200) {
       context.commit('GET_ORDER_LIST', result.data);
     }
-  }
+  },
 };
 const mutations = {
   GET_USER_ADDRESS(state, value) {

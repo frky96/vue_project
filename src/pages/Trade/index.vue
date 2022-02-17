@@ -3,12 +3,21 @@
     <h3 class="title">填写并核对订单信息</h3>
     <div class="content">
       <h5 class="receive">收件人信息</h5>
-      <div class="address clearFix" v-for="item1 in address" :key="item1.id">
-        <span class="username selected">{{item1.consignee}}</span>
+      <div
+        class="address clearFix"
+        v-for="itemAdd in address"
+        :key="itemAdd.id"
+        @click="clickAddress(itemAdd)"
+      >
+        <span
+          class="username"
+          :class="{ selected: itemAdd.isDefault == '1' }"
+          >{{ itemAdd.consignee }}</span
+        >
         <p>
-          <span class="s1">{{item1.fullAddress}}</span>
-          <span class="s2">{{item1.phoneNum}}</span>
-          <span class="s3">默认地址</span>
+          <span class="s1">{{ itemAdd.fullAddress }}</span>
+          <span class="s2">{{ itemAdd.phoneNum }}</span>
+          <span class="s3" v-if="itemAdd.isDefault == 1">默认地址</span>
         </p>
       </div>
       <div class="line"></div>
@@ -43,7 +52,7 @@
             <h4>7天无理由退货</h4>
           </li>
           <li>
-            <h3>￥{{ item.skuPrice }}</h3>
+            <h3>￥{{ item.orderPrice }}</h3>
           </li>
           <li>X{{ item.skuNum }}</li>
           <li>有货</li>
@@ -54,6 +63,7 @@
         <textarea
           placeholder="建议留言前先与商家沟通确认"
           class="remarks-cont"
+          v-model="buyerMsg"
         ></textarea>
       </div>
       <div class="line"></div>
@@ -66,12 +76,17 @@
     <div class="money clearFix">
       <ul>
         <li>
-          <b><i>1</i>件商品，总商品金额</b>
-          <span>¥5399.00</span>
+          <b
+            ><i>{{ orderList.totalNum }}</i
+            >件商品，总商品金额</b
+          >
+          <span>¥{{ orderList.originalTotalAmount }}</span>
         </li>
         <li>
           <b>返现：</b>
-          <span>0.00</span>
+          <span>{{
+            orderList.originalTotalAmount - orderList.totalAmount
+          }}</span>
         </li>
         <li>
           <b>运费：</b>
@@ -80,16 +95,18 @@
       </ul>
     </div>
     <div class="trade">
-      <div class="price">应付金额:　<span>¥5399.00</span></div>
+      <div class="price">
+        应付金额:　<span>¥{{ orderList.totalAmount }}</span>
+      </div>
       <div class="receiveInfo">
         寄送至:
-        <span>北京市昌平区宏福科技园综合楼6层</span>
-        收货人：<span>张三</span>
-        <span>15010658793</span>
+        <span>{{ chosenAddress.fullAddress }}</span>
+        收货人：<span>{{ chosenAddress.consignee }}</span>
+        <span>{{ chosenAddress.phoneNum }}</span>
       </div>
     </div>
     <div class="sub clearFix">
-      <router-link class="subBtn" to="/pay">提交订单</router-link>
+      <a class="subBtn" @click="clickSubBtn">提交订单</a>
     </div>
   </div>
 </template>
@@ -98,8 +115,48 @@
 import { mapState } from "vuex";
 export default {
   name: "Trade",
+  data() {
+    return {
+      chosenAddress: {},
+      buyerMsg: "",
+      orderId: "",
+    };
+  },
   computed: {
     ...mapState("order", ["address", "orderList"]),
+  },
+  methods: {
+    clickAddress(item) {
+      this.address.forEach((e) => {
+        e.isDefault = "0";
+      });
+      item.isDefault = "1";
+    },
+    async clickSubBtn() {
+      let tradeNo = this.orderList.tradeNo;
+      const data = {
+        consignee: this.chosenAddress.consignee,
+        consigneeTel: this.chosenAddress.phoneNum,
+        deliveryAddress: this.chosenAddress.fullAddress,
+        paymentWay: "ONLINE",
+        orderComment: this.buyerMsg,
+        orderDetailList: this.orderList.detailArrayList,
+      };
+      const result = await this.$api.reqOrderSubmit(tradeNo, data);
+      if (result.code == 200) {
+        this.orderId = result.data;
+        this.$router.push(`/pay?orderId=${this.orderId}`);
+      }
+      console.log(result);
+    },
+  },
+  watch: {
+    address: {
+      deep: true,
+      handler() {
+        this.chosenAddress = this.address.find((e) => e.isDefault == "1");
+      },
+    },
   },
   mounted() {
     this.$store.dispatch("order/getUserAddress");

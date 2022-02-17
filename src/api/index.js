@@ -7,11 +7,11 @@ export const reqCateList = () => {
     method: 'GET'
   })
 }
-export const reqSearchList = (params = {}) => {
+export const reqSearchList = (data = {}) => {
   return axiosReq({
     url: '/list',
     method: 'POST',
-    data: params
+    data
   })
 }
 export const reqItemDetail = (skuId) => {
@@ -53,6 +53,31 @@ export const reqUserAddress = () => {
 export const reqOrderList = () => {
   return axiosReq({
     url: `/order/auth/trade`,
+    method: 'GET',
+  })
+}
+export const reqOrderSubmit = (tradeNo, data = {}) => {
+  return axiosReq({
+    url: `/order/auth/submitOrder?tradeNo=${tradeNo}`,
+    method: 'POST',
+    data
+  })
+}
+export const reqGetOrder = (orderId) => {
+  return axiosReq({
+    url: `/payment/weixin/createNative/${orderId}`,
+    method: 'GET',
+  })
+}
+export const reqPayStatus = (orderId) => {
+  return axiosReq({
+    url: `/payment/weixin/queryPayStatus/${orderId}`,
+    method: 'GET',
+  })
+}
+export const reqMyOrderList = (page = 1, limit = 10) => {
+  return axiosReq({
+    url: `/order/auth/${page}/${limit}`,
     method: 'GET',
   })
 }

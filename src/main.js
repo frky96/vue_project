@@ -21,6 +21,12 @@ import '@/mock/mockServe.js';
 //导入swiper样式
 import 'swiper/css/swiper.css';
 
+// 导入全部接口
+import * as API from '@/api/index';
+
+import { MessageBox } from 'element-ui';
+Vue.prototype.$msgbox = MessageBox;
+Vue.prototype.$alert = MessageBox.alert;
 
 Vue.config.productionTip = false;
 new Vue({
@@ -29,6 +35,7 @@ new Vue({
   store, //注册vuex仓库
   beforeCreate() {
     Vue.prototype.$bus = this;
+    Vue.prototype.$api = API;
   }
 }).$mount('#app')
 
