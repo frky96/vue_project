@@ -15,6 +15,7 @@ axiosReq.interceptors.request.use((config) => {
     //添加响应头userTempId：uuid游客唯一标识符
     config.headers.userTempId = store.state.detail.uuidToken;
   }
+  //接口/user/passport/auth/getUserInfo会进行token校验
   if (localStorage.getItem('token')) {
     config.headers.token = localStorage.getItem('token');
   }

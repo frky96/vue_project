@@ -13,21 +13,25 @@
             </li>
           </ul>
           <div class="content">
-            <form action="##">
+            <form>
               <div class="input-text clearFix">
                 <span></span>
                 <input
                   type="text"
+                  name="phone"
                   placeholder="邮箱/用户名/手机号"
                   v-model="username"
+                  v-validate="{ required: true, regex: /^1\d{10}$/ }"
                 />
               </div>
               <div class="input-text clearFix">
                 <span class="pwd"></span>
                 <input
                   type="password"
+                  name="password"
                   placeholder="请输入密码"
                   v-model="password"
+                  v-validate="{ required: true, regex: /^[0-9A-Za-z]{6,20}$/ }"
                 />
               </div>
               <div class="setting clearFix">
@@ -37,7 +41,9 @@
                 </label>
                 <span class="forget">忘记密码？</span>
               </div>
-              <button class="btn" @click.prevent="clickLogin">登&nbsp;&nbsp;录</button>
+              <button class="btn" @click.prevent="clickLogin">
+                登&nbsp;&nbsp;录
+              </button>
             </form>
 
             <div class="call clearFix">
@@ -85,14 +91,16 @@ export default {
   },
   methods: {
     async clickLogin() {
-      if (this.username && this.password) {
-        let data = { phone: this.username, password: this.password };
-        try {
+      try {
+        const isValid = await this.$validator.validate("phone");
+        if (isValid) {
+          let data = { phone: this.username, password: this.password };
           await this.$store.dispatch("regLog/getLoginData", data);
-          this.$router.push("/home");
-        } catch (error) {
-          console.log(error);
-        }
+          let toPath = this.$route.query.redirect || "/home";
+          this.$router.push(toPath);
+        } else console.log(isValid);
+      } catch (error) {
+        console.log(error);
       }
     },
   },

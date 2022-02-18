@@ -10,39 +10,65 @@
       </h3>
       <div class="content">
         <label>手机号:</label>
-        <input type="tel" placeholder="请输入你的手机号" v-model="phoneNum" />
-        <span class="error-msg">错误提示信息</span>
+        <input
+          type="tel"
+          name="phone"
+          placeholder="请输入你的手机号"
+          v-model="phoneNum"
+          v-validate="{ required: true, regex: /^1\d{10}$/ }"
+          :class="{ invalid: errors.has('phone') }"
+        />
+        <span class="error-msg">{{ errors.first("phone") }}</span>
       </div>
       <div class="content">
         <label>验证码:</label>
-        <input type="tel" placeholder="请输入验证码" v-model="myCode" />
+        <input
+          type="tel"
+          name="code"
+          placeholder="请输入验证码"
+          v-model="myCode"
+          v-validate="{ required: true, regex: /^\d{6}$/ }"
+          :class="{ invalid: errors.has('code') }"
+        />
         <button style="height: 38px; width: 80px" @click="clickCodeBtn">
           获取验证码
         </button>
-        <span class="error-msg">错误提示信息</span>
+        <span class="error-msg">{{ errors.first("code") }}</span>
       </div>
       <div class="content">
         <label>登录密码:</label>
         <input
           type="password"
+          name="password"
           placeholder="请输入你的登录密码"
           v-model="password"
+          v-validate="{ required: true, regex: /^[0-9A-Za-z]{6,20}$/ }"
+          :class="{ invalid: errors.has('password') }"
         />
-        <span class="error-msg">错误提示信息</span>
+        <span class="error-msg">{{ errors.first("password") }}</span>
       </div>
       <div class="content">
         <label>确认密码:</label>
         <input
           type="password"
+          name="password1"
           placeholder="请输入确认密码"
           v-model="password1"
+          v-validate="{ required: true, is: password }"
+          :class="{ invalid: errors.has('password1') }"
         />
-        <span class="error-msg">错误提示信息</span>
+        <span class="error-msg">{{ errors.first("password1") }}</span>
       </div>
       <div class="controls">
-        <input name="m1" type="checkbox" v-model="isAgree" />
+        <input
+          name="agree"
+          type="checkbox"
+          v-model="isAgree"
+          v-validate="{ required: true, agree: true }"
+          :class="{ invalid: errors.has('agree') }"
+        />
         <span>同意协议并注册《尚品汇用户协议》</span>
-        <span class="error-msg">错误提示信息</span>
+        <span class="error-msg">{{ errors.first("agree") }}</span>
       </div>
       <div class="btn">
         <button @click="clickReg">完成注册</button>
@@ -84,30 +110,31 @@ export default {
     ...mapState("regLog", ["code"]),
   },
   methods: {
-    clickCodeBtn() {
-      if (this.phoneNum) {
-        this.$store.dispatch("regLog/getCode", this.phoneNum);
+    async clickCodeBtn() {
+      try {
+        const isValid = await this.$validator.validate("phone");
+        if (isValid) {
+          this.$store.dispatch("regLog/getCode", this.phoneNum);
+        } else console.log(isValid);
+      } catch (error) {
+        console.log(error);
       }
     },
     async clickReg() {
-      if (
-        this.phoneNum &&
-        this.myCode &&
-        this.password &&
-        this.password === this.password1
-      ) {
-        let data = {
-          phone: this.phoneNum,
-          password: this.password,
-          code: this.myCode,
-        };
-        try {
+      try {
+        const isValid = await this.$validator.validateAll();
+        if (isValid) {
+          const data = {
+            phone: this.phoneNum,
+            password: this.password,
+            code: this.myCode,
+          };
           await this.$store.dispatch("regLog/register", data);
           this.$router.push("/login");
-        } catch (error) {
-          console.log(error);
-        }
-      } else console.log("illegal input");
+        } else console.log(isValid);
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 };

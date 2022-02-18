@@ -24,9 +24,21 @@ import 'swiper/css/swiper.css';
 // 导入全部接口
 import * as API from '@/api/index';
 
+//导入elementui
 import { MessageBox } from 'element-ui';
 Vue.prototype.$msgbox = MessageBox;
 Vue.prototype.$alert = MessageBox.alert;
+
+//导入懒加载
+import VueLazyload from 'vue-lazyload';
+import loadingGif from '@/assets/loading.gif';
+//使用懒加载插件
+Vue.use(VueLazyload, {
+  loading: loadingGif,
+});
+
+//导入表单验证插件
+import "@/plugins/validate";
 
 Vue.config.productionTip = false;
 new Vue({
